@@ -41,8 +41,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private float currentAngleX;
     private float initAngleX = -1;
     private float deltaAngleX;
+    private float tempAngleX;
+    private final float TRANS_ANGLE = 70;
 
-    private final int INIT_SPEED = 100;
+    private final int INIT_SPEED = 200;
     private boolean isDrawing;
 
     private ArrayList<float[]> mTransPoint;
@@ -60,6 +62,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         mAllPoint = new ArrayList<>();
         float[] xy = {0,0};
         mAllPoint.add(xy);
+        mTransPoint.add(xy);
 
         mGpsBtn = (Button) findViewById(R.id.gps_btn);
         mGpsBtn.setOnClickListener(new View.OnClickListener() {
@@ -78,15 +81,11 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 mySurfaceView.setIsDrawing(isDrawing);
                 if(isDrawing) {
                     mStartBtn.setText("Pause");
-                    ArrayList<float[]> list = new ArrayList<float[]>();
                     if(mAllSectionList.size() == 0) {
+                        ArrayList<float[]> list = new ArrayList<float[]>();
                         list.add(mAllPoint.get(0));
+                        mAllSectionList.add(list);
                     }
-                    mAllSectionList.add(list);
-
-                    mTransPoint.add(mAllPoint.get(index));
-
-                    mySurfaceView.setData(mAllPoint,mTransPoint,mAllSectionList);
                 }else {
                     mStartBtn.setText("Start");
                 }
@@ -98,8 +97,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         mResultTextView = (TextView) findViewById(R.id.result);
         mySurfaceView = (MySurfaceView) findViewById(R.id.surfaceView);
 //        mySurfaceView.setZOrderOnTop(true);//设置画布  背景透明
-        mySurfaceView.getHolder().setFormat(PixelFormat.TRANSLUCENT);
+//        mySurfaceView.getHolder().setFormat(PixelFormat.TRANSLUCENT);
         mySurfaceView.setTopScrollView(mVerticalScrollView,mHorizontalScrollView);
+        mySurfaceView.setData(mAllPoint,mTransPoint,mAllSectionList);
 
         mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
@@ -193,6 +193,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
             if(initAngleX == -1) {
                 initAngleX = event.values[0];
+                tempAngleX = initAngleX;
             }
 
             currentAngleX = event.values[0];
@@ -212,6 +213,15 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         mAllPoint.add(XY);
         mResultTextView.setText(mResultTextView.getText().toString() + "位移X=" + XY[0] + "\n"
                 + "位移Y=" + XY[1] + "\n");
+
+        float tempDeltaAngleX = currentAngleX - tempAngleX;
+        if(Math.abs(tempDeltaAngleX) > TRANS_ANGLE) {
+            tempAngleX = currentAngleX;
+            mTransPoint.add(XY);
+
+            ArrayList<float[]> list = new ArrayList<float[]>();
+            mAllSectionList.add(list);
+        }
 
         if(!mAllSectionList.isEmpty()) {
             ArrayList<float[]> list = mAllSectionList.get(mAllSectionList.size() - 1);

@@ -26,9 +26,9 @@
 
                 <com.example.liurunxiong.demo_sensor.MySurfaceView
                     android:id="@+id/surfaceView"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="300dp"
-                    android:background="#55c34513" />
+                    />
             </LinearLayout>
         </HorizontalScrollView>
     </ScrollView>

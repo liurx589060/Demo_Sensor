@@ -110,21 +110,19 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
 
                 mX = mTopScrollView.getWidth() / 2;
                 mY = mTopScrollView.getHeight() / 2;
+                MySurfaceView.this.requestLayout();
             }
         });
     }
 
     public void listenViewRefresh() {
         MySurfaceView.this.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
+            @RequiresApi(api = Build.VERSION_CODES.KITKAT)
             @Override
             public void onGlobalLayout() {
-                isDrawing = true;
-                isCreate = true;
-                MySurfaceView.this.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-
-                bak = Bitmap.createBitmap(MySurfaceView.this.getWidth(), MySurfaceView.this.getHeight(), Bitmap.Config.ARGB_4444);
-                bakCanvas = new Canvas(bak);
+//                bak.recycle();
+//                bak = Bitmap.createBitmap(MySurfaceView.this.getWidth(), MySurfaceView.this.getHeight(), Bitmap.Config.ARGB_4444);
+//                bakCanvas = new Canvas(bak);
 
                 int maxRadius = Math.max(NORMAL_POINT_RADIUS,TRANS_POINT_RADIUS);
                 mX += originOffsetX > 0 ? originOffsetX - maxRadius : 0;
@@ -137,6 +135,13 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
                 if(originOffsetY < 0) {
                     mTopScrollView.scrollBy(0,Math.abs(originOffsetY));
                 }
+
+                MySurfaceView.this.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+
+                isDrawing = true;
+                isCreate = true;
+
+                MySurfaceView.this.requestLayout();
             }
         });
     }
@@ -160,7 +165,7 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
         mHolder.addCallback(this);
 
         mPaint = new Paint();
-        mPaint.setColor(Color.BLUE);
+        mPaint.setColor(Color.WHITE);
         mPaint.setStrokeWidth(5);
         mPaint.setStyle(Paint.Style.FILL);
         mPaint.setAntiAlias(true);
@@ -172,7 +177,7 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
         mTransPaint.setAntiAlias(true);
 
         mSelectedSecPaint = new Paint();
-        mSelectedSecPaint.setColor(Color.GRAY);
+        mSelectedSecPaint.setColor(Color.BLUE);
         mSelectedSecPaint.setStrokeWidth(5);
         mSelectedSecPaint.setStyle(Paint.Style.FILL);
         mSelectedSecPaint.setAntiAlias(true);
@@ -188,6 +193,7 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
 
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+        Log.e("yy","高度="+ height);
     }
 
     @Override
@@ -197,6 +203,10 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
             mDrawThread = null;
         }
 
+        if(bak != null) {
+            bak.recycle();
+            bak = null;
+        }
         isCreate = false;
     }
 
@@ -207,8 +217,8 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
 
         float[] xy = {0,0};
         float[] realPosition = {0,0};
-        if(isCreate || mTempSelectedSection != -1) {
-//        if(true) {
+//        if(isCreate || mTempSelectedSection != -1) {
+        if(true) {
             //清屏
             canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
 
@@ -299,8 +309,9 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
 
         public MyDrawThread() {
             isRunning = true;
-            bak = Bitmap.createBitmap(getWidth(), getHeight(), Bitmap.Config.ARGB_4444);
-            bakCanvas = new Canvas(bak);
+
+//            bak = Bitmap.createBitmap(getWidth(), getHeight(), Bitmap.Config.ARGB_4444);
+//            bakCanvas = new Canvas(bak);
         }
 
         @Override
@@ -316,8 +327,8 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
                         if(isRunning) {
                             mCanvas = mHolder.lockCanvas();
                             if(mCanvas != null) {
-                                drawPath(bakCanvas);
-                                mCanvas.drawBitmap(bak,0,0,null);
+                                drawPath(mCanvas);
+//                                mCanvas.drawBitmap(bak,0,0,null);
                             }
                         }
                     }
@@ -375,8 +386,8 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
                 try {
                     synchronized (mHolder) {
                         mCanvas = mHolder.lockCanvas();
-                        drawPath(bakCanvas);
-                        mCanvas.drawBitmap(bak,0,0,null);
+                        drawPath(mCanvas);
+//                        mCanvas.drawBitmap(bak,0,0,null);
                     }
                 }catch (Exception e) {
                     e.printStackTrace();
