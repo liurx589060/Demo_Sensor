@@ -99,7 +99,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         mySurfaceView = (MySurfaceView) findViewById(R.id.surfaceView);
 //        mySurfaceView.setZOrderOnTop(true);//设置画布  背景透明
         mySurfaceView.getHolder().setFormat(PixelFormat.TRANSLUCENT);
-        mySurfaceView.setTopScrollView(mVerticalScrollView);
+        mySurfaceView.setTopScrollView(mVerticalScrollView,mHorizontalScrollView);
 
         mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
