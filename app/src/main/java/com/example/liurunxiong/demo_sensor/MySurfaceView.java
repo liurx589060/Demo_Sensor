@@ -111,6 +111,7 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
                 mX = mTopScrollView.getWidth() / 2;
                 mY = mTopScrollView.getHeight() / 2;
                 MySurfaceView.this.requestLayout();
+                mHolder.setFixedSize(params.width,params.height);
             }
         });
     }
@@ -142,6 +143,7 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
                 isCreate = true;
 
                 MySurfaceView.this.requestLayout();
+                mHolder.setFixedSize(getWidth(),getHeight());
             }
         });
     }
@@ -203,10 +205,10 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
             mDrawThread = null;
         }
 
-        if(bak != null) {
-            bak.recycle();
-            bak = null;
-        }
+//        if(bak != null) {
+//            bak.recycle();
+//            bak = null;
+//        }
         isCreate = false;
     }
 

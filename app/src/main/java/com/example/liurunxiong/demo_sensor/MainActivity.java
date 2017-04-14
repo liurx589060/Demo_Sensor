@@ -143,6 +143,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         }
 
         long timeDelata = System.currentTimeMillis() - preTime;
+        float delAngle = 0;
 
         StringBuilder builder = new StringBuilder();
         float limit = 0.5f;
@@ -215,6 +216,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 + "位移Y=" + XY[1] + "\n");
 
         float tempDeltaAngleX = currentAngleX - tempAngleX;
+        tempDeltaAngleX = Math.min(Math.abs(tempDeltaAngleX),Math.abs(360 - Math.abs(tempDeltaAngleX)));
         if(Math.abs(tempDeltaAngleX) > TRANS_ANGLE) {
             tempAngleX = currentAngleX;
             mTransPoint.add(XY);
